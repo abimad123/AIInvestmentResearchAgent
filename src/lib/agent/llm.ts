@@ -5,9 +5,10 @@ import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 export function getLLM(temperature = 0): BaseChatModel {
   const provider = process.env.LLM_PROVIDER?.toLowerCase() || "openai";
 
-  if (provider === "google") {
+  if (provider === "google" || provider === "gemini") {
     return new ChatGoogleGenerativeAI({
-      modelName: "gemini-1.5-flash",
+      model: "gemini-3.5-flash",
+      apiKey: process.env.GOOGLE_API_KEY,
       temperature,
     });
   }
