@@ -34,7 +34,7 @@ export default function Home() {
     reasons: string[];
   } | null>(null);
 
-  const [financials, setFinancials] = useState<string>("");
+  const [financials, setFinancials] = useState<any>(null);
   const [news, setNews] = useState<any[]>([]);
   const [marketAnalysis, setMarketAnalysis] = useState<any>(null);
   const [riskAssessment, setRiskAssessment] = useState<any>(null);
@@ -183,17 +183,20 @@ export default function Home() {
                   break;
 
                 case "synthesizeDecision":
-                  setVerdictData({
-                    verdict: data.decision.verdict,
-                    confidence: data.decision.confidence,
-                    reasons: data.decision.reasons.map((r: any) => r.text),
-                  });
-                  setSourcesUsed(data.decision.sourcesUsed || []);
-                  updateStepStatus(
-                    "synthesizeDecision",
-                    "completed",
-                    `Verdict: ${data.decision.verdict} (${data.decision.confidence} confidence)`
-                  );
+                  const decision = data.finalDecision;
+                  if (decision) {
+                    setVerdictData({
+                      verdict: decision.verdict,
+                      confidence: decision.confidenceScore,
+                      reasons: decision.reasons.map((r: any) => r.text),
+                    });
+                    setSourcesUsed(decision.sourcesUsed || []);
+                    updateStepStatus(
+                      "synthesizeDecision",
+                      "completed",
+                      `Verdict: ${decision.verdict} (${decision.confidenceScore} confidence)`
+                    );
+                  }
                   break;
               }
             } catch (err) {

@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { DollarSign, ShieldAlert, BarChart3, Link2, Newspaper, TrendingUp, AlertTriangle } from "lucide-react";
 
 interface ResultSectionsProps {
-  financials?: string;
+  financials?: any;
   news?: Array<{ title: string; url: string; description: string; time?: string; score?: number }>;
   marketAnalysis?: {
     SWOT?: {
@@ -101,8 +101,79 @@ export function ResultSections({
                   <DollarSign className="w-4 h-4 text-zinc-500" />
                   Financial Snapshot
                 </h3>
-                <div className="bg-zinc-50 border border-zinc-100 rounded-2xl p-5 text-sm text-zinc-700 leading-relaxed whitespace-pre-line font-mono overflow-x-auto">
-                  {financials}
+                <div className="bg-zinc-50 border border-zinc-100 rounded-2xl p-5 text-sm text-zinc-700 leading-relaxed overflow-x-auto">
+                  {typeof financials === "string" ? (
+                    <div className="whitespace-pre-line font-mono">{financials}</div>
+                  ) : financials.source === "Alpha Vantage" ? (
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between border-b border-zinc-200/60 pb-2">
+                        <span className="font-bold text-zinc-800">{financials.name} ({financials.symbol})</span>
+                        <span className="bg-zinc-200/60 text-zinc-700 text-xs font-semibold px-2 py-0.5 rounded">Alpha Vantage Data</span>
+                      </div>
+                      {financials.description && (
+                        <p className="text-xs text-zinc-500 leading-relaxed mb-4">{financials.description}</p>
+                      )}
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <div className="bg-white p-3 rounded-xl border border-zinc-100">
+                          <span className="block text-[10px] text-zinc-400 font-bold uppercase tracking-wider">Industry</span>
+                          <span className="text-xs font-semibold text-zinc-700">{financials.industry || "N/A"}</span>
+                        </div>
+                        <div className="bg-white p-3 rounded-xl border border-zinc-100">
+                          <span className="block text-[10px] text-zinc-400 font-bold uppercase tracking-wider">P/E Ratio</span>
+                          <span className="text-xs font-semibold text-zinc-700">{financials.peRatio || "N/A"}</span>
+                        </div>
+                        <div className="bg-white p-3 rounded-xl border border-zinc-100">
+                          <span className="block text-[10px] text-zinc-400 font-bold uppercase tracking-wider">PEG Ratio</span>
+                          <span className="text-xs font-semibold text-zinc-700">{financials.pegRatio || "N/A"}</span>
+                        </div>
+                        <div className="bg-white p-3 rounded-xl border border-zinc-100">
+                          <span className="block text-[10px] text-zinc-400 font-bold uppercase tracking-wider">Dividend Yield</span>
+                          <span className="text-xs font-semibold text-zinc-700">{financials.dividendYield ? `${(parseFloat(financials.dividendYield) * 100).toFixed(2)}%` : "N/A"}</span>
+                        </div>
+                        <div className="bg-white p-3 rounded-xl border border-zinc-100">
+                          <span className="block text-[10px] text-zinc-400 font-bold uppercase tracking-wider">EPS</span>
+                          <span className="text-xs font-semibold text-zinc-700">{financials.eps || "N/A"}</span>
+                        </div>
+                        <div className="bg-white p-3 rounded-xl border border-zinc-100">
+                          <span className="block text-[10px] text-zinc-400 font-bold uppercase tracking-wider">Profit Margin</span>
+                          <span className="text-xs font-semibold text-zinc-700">{financials.profitMargin ? `${(parseFloat(financials.profitMargin) * 100).toFixed(2)}%` : "N/A"}</span>
+                        </div>
+                        <div className="bg-white p-3 rounded-xl border border-zinc-100 col-span-2">
+                          <span className="block text-[10px] text-zinc-400 font-bold uppercase tracking-wider">Revenue / Gross Profit (TTM)</span>
+                          <span className="text-xs font-semibold text-zinc-700">
+                            {financials.revenueTTM ? `$${(parseFloat(financials.revenueTTM) / 1e9).toFixed(2)}B` : "N/A"} / {financials.grossProfitTTM ? `$${(parseFloat(financials.grossProfitTTM) / 1e9).toFixed(2)}B` : "N/A"}
+                          </span>
+                        </div>
+                        <div className="bg-white p-3 rounded-xl border border-zinc-100">
+                          <span className="block text-[10px] text-zinc-400 font-bold uppercase tracking-wider">Rev Growth YoY</span>
+                          <span className="text-xs font-semibold text-zinc-700">
+                            {financials.quarterlyRevenueGrowthYOY ? `${(parseFloat(financials.quarterlyRevenueGrowthYOY) * 100).toFixed(2)}%` : "N/A"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ) : financials.source?.includes("Tavily") ? (
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between border-b border-zinc-200/60 pb-2">
+                        <span className="font-bold text-zinc-800">Financial Web Intelligence</span>
+                        <span className="bg-zinc-200/60 text-zinc-700 text-xs font-semibold px-2 py-0.5 rounded">Tavily Fallback Search</span>
+                      </div>
+                      <div className="space-y-3">
+                        {financials.searchData?.map((item: any, idx: number) => (
+                          <div key={idx} className="bg-white p-3.5 rounded-xl border border-zinc-100">
+                            <h5 className="text-xs font-bold text-zinc-700 mb-1">
+                              <a href={item.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                                {item.title}
+                              </a>
+                            </h5>
+                            <p className="text-[11px] text-zinc-500 leading-relaxed">{item.content}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <pre className="font-mono text-xs whitespace-pre-wrap">{JSON.stringify(financials, null, 2)}</pre>
+                  )}
                 </div>
               </div>
             )}
