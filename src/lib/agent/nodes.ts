@@ -119,7 +119,7 @@ ${finContext}
 ---
 
 Your response MUST fulfill both of the following:
-1. marketAnalysis: Fulfill this text covering competitive landscape, industry tailwinds and headwinds, and Total Addressable Market (TAM) commentary.
+1. marketAnalysis: A structured market analysis including SWOT grid lists, TAM estimation/commentary, and lists of tailwinds and headwinds.
 2. riskAssessment: Fulfill this list of risks evaluating Regulatory risks, Key-person risks, Balance sheet / financial risks, and Concentration risks. Ground every risk in a specific fact from the context, and cite the source (URL or 'gatherFinancials').
 
 Provide the output strictly matching the structured schema.`;

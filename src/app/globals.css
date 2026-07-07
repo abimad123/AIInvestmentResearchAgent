@@ -5,11 +5,15 @@
   --foreground: #18181b;
 }
 
-@theme inline {
+@theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-brand: #CE2028;
+  --color-brand-hover: #A81B21;
+  --color-brand-soft: #FCEDEE;
+  --color-brand-accent: #E63946;
 }
 
 body {

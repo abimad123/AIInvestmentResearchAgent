@@ -8,7 +8,7 @@ export const AgentState = Annotation.Root({
   ticker: Annotation<string>,
   news: Annotation<any[]>,
   financials: Annotation<any>,
-  marketAnalysis: Annotation<string>,
+  marketAnalysis: Annotation<any>,
   riskAssessment: Annotation<any>,
   finalDecision: Annotation<any>,
 });
@@ -29,7 +29,17 @@ export const RiskAssessmentSchema = z.object({
 });
 
 export const MarketAndRiskAnalysisSchema = z.object({
-  marketAnalysis: z.string().describe("A comprehensive market analysis text covering competitive landscape, industry tailwinds and headwinds, and TAM commentary."),
+  marketAnalysis: z.object({
+    SWOT: z.object({
+      strengths: z.array(z.string()).describe("List of internal strengths"),
+      weaknesses: z.array(z.string()).describe("List of internal weaknesses"),
+      opportunities: z.array(z.string()).describe("List of external opportunities"),
+      threats: z.array(z.string()).describe("List of external threats"),
+    }).describe("SWOT analysis components"),
+    TAM: z.string().describe("TAM estimation and commentary"),
+    tailwinds: z.array(z.string()).describe("Market tailwinds and drivers"),
+    headwinds: z.array(z.string()).describe("Market headwinds and barriers"),
+  }).describe("Structured market analysis"),
   riskAssessment: z.object({
     risks: z.array(z.object({
       type: z.string().describe("The type of risk, e.g., Regulatory, Leadership, Financial, Concentration, etc."),

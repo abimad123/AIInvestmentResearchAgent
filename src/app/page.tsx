@@ -219,22 +219,22 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-zinc-50/30 pb-20 font-sans relative overflow-x-hidden">
       {/* Decorative subtle top gradient blob */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[400px] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-100/30 via-transparent to-transparent -z-10 pointer-events-none blur-3xl" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[400px] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-brand-soft/80 via-transparent to-transparent -z-10 pointer-events-none blur-3xl" />
 
       {/* Premium Glassmorphic Header */}
       <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-zinc-200/50 transition-all">
         <div className="max-w-[1400px] mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="bg-indigo-600 text-white p-2.5 rounded-2xl shadow-md shadow-indigo-100 flex items-center justify-center">
+            <div className="bg-brand text-white p-2.5 rounded-2xl shadow-md shadow-brand-soft flex items-center justify-center">
               <Cpu className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-base font-extrabold text-zinc-950 tracking-tight flex items-center gap-0.5">
-                  <span className="text-indigo-600 font-black">FinSight</span>
+                  <span className="text-brand font-black">FinSight</span>
                   <span>AI</span>
                 </h1>
-                <span className="bg-indigo-50 text-indigo-700 text-[9px] font-bold px-2 py-0.5 rounded-full border border-indigo-100/50 uppercase tracking-wide">
+                <span className="bg-brand-soft text-brand text-[9px] font-bold px-2 py-0.5 rounded-full border border-brand-soft uppercase tracking-wide">
                   Research Agent
                 </span>
               </div>
@@ -290,7 +290,7 @@ export default function Home() {
             /* Blank state cards */
             <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 mt-16 animate-fadeIn">
               <div className="bg-white border border-zinc-200/60 rounded-3xl p-7 shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-zinc-300/80 transition-all duration-300 group">
-                <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-indigo-100 transition-all duration-300">
+                <div className="w-12 h-12 rounded-2xl bg-brand-soft text-brand flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-brand-soft/80 transition-all duration-300">
                   <CheckCircle2 className="w-5 h-5" />
                 </div>
                 <h4 className="text-sm font-bold text-zinc-900 mb-2">Company Verification</h4>
@@ -300,7 +300,7 @@ export default function Home() {
               </div>
 
               <div className="bg-white border border-zinc-200/60 rounded-3xl p-7 shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-zinc-300/80 transition-all duration-300 group">
-                <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-indigo-100 transition-all duration-300">
+                <div className="w-12 h-12 rounded-2xl bg-brand-soft text-brand flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-brand-soft/80 transition-all duration-300">
                   <BarChart3 className="w-5 h-5" />
                 </div>
                 <h4 className="text-sm font-bold text-zinc-900 mb-2">Financials & Market SWOT</h4>
@@ -310,7 +310,7 @@ export default function Home() {
               </div>
 
               <div className="bg-white border border-zinc-200/60 rounded-3xl p-7 shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-zinc-300/80 transition-all duration-300 group">
-                <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-indigo-100 transition-all duration-300">
+                <div className="w-12 h-12 rounded-2xl bg-brand-soft text-brand flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-brand-soft/80 transition-all duration-300">
                   <ShieldAlert className="w-5 h-5" />
                 </div>
                 <h4 className="text-sm font-bold text-zinc-900 mb-2">Risk & Decision Synthesis</h4>
@@ -323,7 +323,7 @@ export default function Home() {
             {/* How it Works Section */}
             <div className="mt-28 border-t border-zinc-200/50 pt-20 pb-10 max-w-[1400px] mx-auto animate-fadeIn">
               <div className="text-center mb-16">
-                <span className="text-xs font-bold text-indigo-600 bg-indigo-50/80 px-3.5 py-1.5 rounded-full border border-indigo-100/30 uppercase tracking-widest">
+                <span className="text-xs font-bold text-brand bg-brand-soft/80 px-3.5 py-1.5 rounded-full border border-brand-soft uppercase tracking-widest">
                   Execution Pipeline
                 </span>
                 <h3 className="text-3xl font-extrabold text-zinc-950 mt-4 tracking-tight">
@@ -337,7 +337,7 @@ export default function Home() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {/* Step 1 */}
                 <div className="bg-white border border-zinc-200/50 p-6 rounded-2xl flex gap-4 hover:shadow-md hover:border-zinc-300/80 transition-all duration-300">
-                  <div className="text-2xl font-black text-indigo-100 flex-shrink-0 select-none">01</div>
+                  <div className="text-2xl font-black text-brand-soft flex-shrink-0 select-none">01</div>
                   <div>
                     <h5 className="text-sm font-bold text-zinc-900 mb-1">Company Resolution</h5>
                     <p className="text-xs text-zinc-500 leading-relaxed font-semibold">Standardizes the query, identifies the formal corporate name, and maps stock tickers.</p>
@@ -346,7 +346,7 @@ export default function Home() {
 
                 {/* Step 2 */}
                 <div className="bg-white border border-zinc-200/50 p-6 rounded-2xl flex gap-4 hover:shadow-md hover:border-zinc-300/80 transition-all duration-300">
-                  <div className="text-2xl font-black text-indigo-100 flex-shrink-0 select-none">02</div>
+                  <div className="text-2xl font-black text-brand-soft flex-shrink-0 select-none">02</div>
                   <div>
                     <h5 className="text-sm font-bold text-zinc-900 mb-1">News Aggregation</h5>
                     <p className="text-xs text-zinc-500 leading-relaxed font-semibold">Gathers recent news, press releases, and articles using weighted web search engines.</p>
@@ -355,7 +355,7 @@ export default function Home() {
 
                 {/* Step 3 */}
                 <div className="bg-white border border-zinc-200/50 p-6 rounded-2xl flex gap-4 hover:shadow-md hover:border-zinc-300/80 transition-all duration-300">
-                  <div className="text-2xl font-black text-indigo-100 flex-shrink-0 select-none">03</div>
+                  <div className="text-2xl font-black text-brand-soft flex-shrink-0 select-none">03</div>
                   <div>
                     <h5 className="text-sm font-bold text-zinc-900 mb-1">Financial Audit</h5>
                     <p className="text-xs text-zinc-500 leading-relaxed font-semibold">Extracts earnings growth, profit margins, balance sheets, and key valuation metrics.</p>
@@ -364,7 +364,7 @@ export default function Home() {
 
                 {/* Step 4 */}
                 <div className="bg-white border border-zinc-200/50 p-6 rounded-2xl flex gap-4 hover:shadow-md hover:border-zinc-300/80 transition-all duration-300">
-                  <div className="text-2xl font-black text-indigo-100 flex-shrink-0 select-none">04</div>
+                  <div className="text-2xl font-black text-brand-soft flex-shrink-0 select-none">04</div>
                   <div>
                     <h5 className="text-sm font-bold text-zinc-900 mb-1">SWOT Analysis</h5>
                     <p className="text-xs text-zinc-500 leading-relaxed font-semibold">Generates a detailed SWOT report assessing market positioning and opportunities.</p>
@@ -373,7 +373,7 @@ export default function Home() {
 
                 {/* Step 5 */}
                 <div className="bg-white border border-zinc-200/50 p-6 rounded-2xl flex gap-4 hover:shadow-md hover:border-zinc-300/80 transition-all duration-300">
-                  <div className="text-2xl font-black text-indigo-100 flex-shrink-0 select-none">05</div>
+                  <div className="text-2xl font-black text-brand-soft flex-shrink-0 select-none">05</div>
                   <div>
                     <h5 className="text-sm font-bold text-zinc-900 mb-1">Risk Assessment</h5>
                     <p className="text-xs text-zinc-500 leading-relaxed font-semibold">Audits operational, leadership, concentration, and regulatory risk categories.</p>
@@ -382,7 +382,7 @@ export default function Home() {
 
                 {/* Step 6 */}
                 <div className="bg-white border border-zinc-200/50 p-6 rounded-2xl flex gap-4 hover:shadow-md hover:border-zinc-300/80 transition-all duration-300">
-                  <div className="text-2xl font-black text-indigo-100 flex-shrink-0 select-none">06</div>
+                  <div className="text-2xl font-black text-brand-soft flex-shrink-0 select-none">06</div>
                   <div>
                     <h5 className="text-sm font-bold text-zinc-900 mb-1">Decision Synthesis</h5>
                     <p className="text-xs text-zinc-500 leading-relaxed font-semibold">Weighs evidence to produce a confidence-graded Invest/Pass/Watch verdict.</p>
@@ -452,7 +452,7 @@ export default function Home() {
             </button>
             
             <div className="flex items-center gap-3 mb-6">
-              <div className="bg-indigo-50 text-indigo-600 p-2.5 rounded-2xl">
+              <div className="bg-brand-soft text-brand p-2.5 rounded-2xl">
                 <FileText className="w-5 h-5" />
               </div>
               <div>
@@ -509,8 +509,8 @@ export default function Home() {
               <X className="w-5 h-5" />
             </button>
             
-            <div className="flex items-center gap-3 mb-6">
-              <div className="bg-indigo-50 text-indigo-600 p-2.5 rounded-2xl">
+             <div className="flex items-center gap-3 mb-6">
+              <div className="bg-brand-soft text-brand p-2.5 rounded-2xl">
                 <Terminal className="w-5 h-5" />
               </div>
               <div>
@@ -521,11 +521,11 @@ export default function Home() {
 
             <div className="space-y-6 text-sm text-zinc-600 leading-relaxed font-semibold">
               <section>
-                <div className="bg-indigo-50/50 border border-indigo-100 rounded-2xl p-4 flex gap-3 text-indigo-900">
-                  <Cpu className="w-5 h-5 text-indigo-600 flex-shrink-0 mt-0.5" />
+                <div className="bg-brand-soft/50 border border-brand-soft rounded-2xl p-4 flex gap-3 text-zinc-800">
+                  <Cpu className="w-5 h-5 text-brand flex-shrink-0 mt-0.5" />
                   <div>
                     <h5 className="text-xs font-bold">Free Integration Tier</h5>
-                    <p className="text-[11px] text-indigo-700/90 mt-0.5 font-medium leading-relaxed">
+                    <p className="text-[11px] text-zinc-500 mt-0.5 font-medium leading-relaxed">
                       FinSight AI is built open-source. Using the integration endpoint is free under local network deployments.
                     </p>
                   </div>
