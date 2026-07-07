@@ -176,7 +176,7 @@ export default function Home() {
                   updateStepStatus(
                     "assessRisk",
                     "completed",
-                    `Assessed ${data.riskAssessment?.risks?.length || 0} key risks`
+                    `Loaded ${data.riskAssessment?.risks?.length || 0} pre-computed key risks`
                   );
                   currentActiveId = "synthesizeDecision";
                   updateStepStatus("synthesizeDecision", "running");
@@ -215,34 +215,53 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-50/50 pb-20 font-sans">
-      {/* Premium Header */}
-      <header className="w-full bg-white border-b border-zinc-100 py-6 mb-12 shadow-sm">
-        <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
+    <div className="min-h-screen bg-zinc-50/30 pb-20 font-sans relative overflow-x-hidden">
+      {/* Decorative subtle top gradient blob */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[400px] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-100/30 via-transparent to-transparent -z-10 pointer-events-none blur-3xl" />
+
+      {/* Premium Glassmorphic Header */}
+      <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-zinc-200/50 transition-all">
+        <div className="max-w-[1400px] mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="bg-zinc-900 text-white p-2.5 rounded-2xl shadow-sm flex items-center justify-center">
+            <div className="bg-indigo-600 text-white p-2.5 rounded-2xl shadow-md shadow-indigo-100 flex items-center justify-center">
               <Cpu className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-lg font-bold text-zinc-900 tracking-tight">Antigravity</h1>
-                <span className="bg-zinc-100 text-zinc-600 text-[10px] font-bold px-2 py-0.5 rounded-full border border-zinc-200/50 uppercase tracking-wide">
-                  Agent v2.0
+                <h1 className="text-base font-extrabold text-zinc-950 tracking-tight flex items-center gap-0.5">
+                  <span className="text-indigo-600 font-black">FinSight</span>
+                  <span>AI</span>
+                </h1>
+                <span className="bg-indigo-50 text-indigo-700 text-[9px] font-bold px-2 py-0.5 rounded-full border border-indigo-100/50 uppercase tracking-wide">
+                  Research Agent
                 </span>
               </div>
-              <p className="text-xs text-zinc-500 font-medium">Autonomous Multi-Step Investment Research</p>
+              <p className="text-[10px] text-zinc-400 font-semibold tracking-wide uppercase">Autonomous investment engine</p>
             </div>
+          </div>
+
+          {/* Navigation links & action button */}
+          <div className="flex items-center gap-6">
+            <nav className="hidden md:flex items-center gap-6">
+              <a href="#" className="text-xs font-semibold text-zinc-500 hover:text-zinc-950 transition-colors">Platform</a>
+              <a href="#" className="text-xs font-semibold text-zinc-500 hover:text-zinc-950 transition-colors">Documentation</a>
+              <a href="#" className="text-xs font-semibold text-zinc-500 hover:text-zinc-950 transition-colors">API pricing</a>
+            </nav>
+            <div className="h-4 w-[1px] bg-zinc-200 hidden md:block" />
+            <button className="h-9 px-4 rounded-xl bg-zinc-955 hover:bg-zinc-800 text-zinc-900 border border-zinc-200/80 hover:border-zinc-300 bg-white font-bold text-xs transition-all shadow-sm hover:shadow active:scale-95">
+              Connect API
+            </button>
           </div>
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-6">
+      <main className="max-w-[1400px] mx-auto px-6 pt-16">
         {/* Search section */}
-        <div className="text-center mb-10">
-          <h2 className="text-3xl font-extrabold text-zinc-900 tracking-tight mb-2 sm:text-4xl">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-black text-zinc-950 tracking-tight mb-3 sm:text-5xl leading-none">
             Evaluate Any Company Instantly
           </h2>
-          <p className="text-sm text-zinc-500 font-medium max-w-lg mx-auto">
+          <p className="text-base text-zinc-500 font-normal max-w-xl mx-auto leading-relaxed tracking-wide">
             Input a name. Our multi-step LangGraph agent will research news, fundamentals, analyze markets, and synthesize a clear verdict.
           </p>
         </div>
@@ -263,33 +282,33 @@ export default function Home() {
         {/* Dashboard Area */}
         {!isLoading && !verdictData && !error && (
           /* Blank state cards */
-          <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 mt-16 animate-fadeIn">
-            <div className="bg-white border border-zinc-100 rounded-2xl p-6 shadow-sm">
-              <div className="w-9 h-9 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center mb-4">
-                <CheckCircle2 className="w-5 h-5 text-zinc-600" />
+          <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 mt-16 animate-fadeIn">
+            <div className="bg-white border border-zinc-200/60 rounded-3xl p-7 shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-zinc-300/80 transition-all duration-300 group">
+              <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-indigo-100 transition-all duration-300">
+                <CheckCircle2 className="w-5 h-5" />
               </div>
-              <h4 className="text-sm font-bold text-zinc-800 mb-2">Company Verification</h4>
-              <p className="text-xs text-zinc-500 leading-relaxed font-medium">
+              <h4 className="text-sm font-bold text-zinc-900 mb-2">Company Verification</h4>
+              <p className="text-xs text-zinc-500 leading-relaxed font-semibold">
                 Resolves brand names to official registered entities, verify public vs private structures, and locate stock tickers automatically.
               </p>
             </div>
 
-            <div className="bg-white border border-zinc-100 rounded-2xl p-6 shadow-sm">
-              <div className="w-9 h-9 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center mb-4">
-                <BarChart3 className="w-5 h-5 text-zinc-600" />
+            <div className="bg-white border border-zinc-200/60 rounded-3xl p-7 shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-zinc-300/80 transition-all duration-300 group">
+              <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-indigo-100 transition-all duration-300">
+                <BarChart3 className="w-5 h-5" />
               </div>
-              <h4 className="text-sm font-bold text-zinc-800 mb-2">Financials & Market SWOT</h4>
-              <p className="text-xs text-zinc-500 leading-relaxed font-medium">
+              <h4 className="text-sm font-bold text-zinc-900 mb-2">Financials & Market SWOT</h4>
+              <p className="text-xs text-zinc-500 leading-relaxed font-semibold">
                 Pulls full financial statements, aggregates recent web news, and builds a comprehensive SWOT grid mapping market positioning.
               </p>
             </div>
 
-            <div className="bg-white border border-zinc-100 rounded-2xl p-6 shadow-sm">
-              <div className="w-9 h-9 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center mb-4">
-                <ShieldAlert className="w-5 h-5 text-zinc-600" />
+            <div className="bg-white border border-zinc-200/60 rounded-3xl p-7 shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-zinc-300/80 transition-all duration-300 group">
+              <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-indigo-100 transition-all duration-300">
+                <ShieldAlert className="w-5 h-5" />
               </div>
-              <h4 className="text-sm font-bold text-zinc-800 mb-2">Risk & Decision Synthesis</h4>
-              <p className="text-xs text-zinc-500 leading-relaxed font-medium">
+              <h4 className="text-sm font-bold text-zinc-900 mb-2">Risk & Decision Synthesis</h4>
+              <p className="text-xs text-zinc-500 leading-relaxed font-semibold">
                 Identifies strategic, operational and liquidity risks, weighs arguments, and computes a confidence-graded Invest/Pass/Watch verdict.
               </p>
             </div>

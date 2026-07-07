@@ -1,8 +1,8 @@
-# AI Investment Research Agent
+# FinSight AI - Investment Research Agent
 
 An autonomous, multi-step investment research agent that evaluates companies and synthesizes structured **Invest / Pass / Watch** recommendations with confidence metrics, cited sources, and step-by-step agent reasoning trails.
 
-Built with **Next.js 14+ (App Router)**, **TypeScript**, **LangGraph**, and **Tailwind CSS**.
+Built with **Next.js 15+ (App Router)**, **TypeScript**, **LangGraph**, and **Tailwind CSS**.
 
 ---
 
@@ -55,8 +55,6 @@ ALPHA_VANTAGE_API_KEY=your-alpha-vantage-api-key
 
 ### 3. Run the Development Server
 ```bash
-# Bypass local proxy self-signed cert issues (highly recommended in corporate/restricted networks)
-$env:NODE_TLS_REJECT_UNAUTHORIZED="0"
 npm run dev
 ```
 Open [http://localhost:3000](http://localhost:3000) (or specified port) to interact with the application.
@@ -70,6 +68,22 @@ npm run build
 
 ## 💡 Key Decisions & Trade-offs
 
-- **Model Shift (`gemini-3.5-flash`)**: Initialized with `gemini-1.5-flash` but found it was unavailable under the provided API key tier. Shifted model selection to `"gemini-3.5-flash"`, which was tested and verified to have operational quota and fast response times.
+- **Model Shift (`gemini-2.5-flash`)**: Transitioned the core LangGraph LLM to `"gemini-2.5-flash"`, which was tested and verified to have operational quota and fast response times.
 - **Proxy/Network Resilience**: Integrated a customized `fetchWithRetry` wrapper to protect tool queries (like Tavily) against network errors (such as `502 Bad Gateway` / `Too many open files`) triggered by local SSL inspection utilities.
 - **Folder Restructuring**: Relocated the `/lib` directory inside `/src` to ensure Next.js path resolution (`@/lib/...`) resolves correctly without typescript compiler configuration issues.
+
+---
+
+## 🔧 Troubleshooting
+
+### TLS/SSL Handshake Errors
+If you're on a network with an SSL-inspecting firewall/antivirus (common on corporate or campus networks) and see TLS handshake errors (`self-signed certificate in certificate chain`), export your network's root CA certificate as a `.pem` file and set the `NODE_EXTRA_CA_CERTS` environment variable to its path:
+
+```bash
+# Windows PowerShell
+$env:NODE_EXTRA_CA_CERTS="C:\path\to\your\root_ca.pem"
+npm run dev
+
+# Linux / macOS
+NODE_EXTRA_CA_CERTS="/path/to/your/root_ca.pem" npm run dev
+```

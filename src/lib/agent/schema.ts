@@ -28,6 +28,18 @@ export const RiskAssessmentSchema = z.object({
   }))
 });
 
+export const MarketAndRiskAnalysisSchema = z.object({
+  marketAnalysis: z.string().describe("A comprehensive market analysis text covering competitive landscape, industry tailwinds and headwinds, and TAM commentary."),
+  riskAssessment: z.object({
+    risks: z.array(z.object({
+      type: z.string().describe("The type of risk, e.g., Regulatory, Leadership, Financial, Concentration, etc."),
+      description: z.string().describe("A specific risk scenario description"),
+      severity: z.enum(["low", "medium", "high"]),
+      source: z.string().describe("The source citation (URL or 'gatherFinancials')")
+    }))
+  })
+});
+
 export const FinalDecisionSchema = z.object({
   verdict: z.enum(["INVEST", "PASS", "WATCH"]),
   confidenceScore: z.enum(["low", "medium", "high"]),

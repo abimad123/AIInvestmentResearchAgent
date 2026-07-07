@@ -1,9 +1,10 @@
 import { getLLM } from "./llm";
-import { ResolveCompanySchema, RiskAssessmentSchema, FinalDecisionSchema } from "./schema";
+import { ResolveCompanySchema, RiskAssessmentSchema, FinalDecisionSchema, MarketAndRiskAnalysisSchema } from "./schema";
 import { searchNews } from "./tools/tavily";
 import { getCompanyOverview } from "./tools/financials";
 
 export async function resolveCompany(state: any) {
+  const startTime = Date.now();
   console.log(`Running resolveCompany node for: ${state.companyName}...`);
   const llm = getLLM(0);
   
@@ -27,7 +28,9 @@ Determine:
 
   const result = await structuredLlm.invoke(prompt);
   
+  const latency = ((Date.now() - startTime) / 1000).toFixed(2);
   console.log(`Resolved company to: ${result.resolvedName} (Public: ${result.isPublic}, Ticker: ${result.ticker || "N/A"})`);
+  console.log(`[BENCHMARK] Node resolveCompany took ${latency}s`);
   
   return {
     resolvedName: result.resolvedName,
@@ -37,6 +40,7 @@ Determine:
 }
 
 export async function gatherNews(state: any) {
+  const startTime = Date.now();
   console.log(`Running gatherNews node for: ${state.resolvedName || state.companyName}...`);
   const companyName = state.resolvedName || state.companyName;
   const query = `${companyName} recent news controversies funding rounds leadership changes 2025 2026`;
@@ -48,23 +52,27 @@ export async function gatherNews(state: any) {
     content: r.content,
   }));
   
+  const latency = ((Date.now() - startTime) / 1000).toFixed(2);
   console.log(`Gathered ${news.length} news items.`);
+  console.log(`[BENCHMARK] Node gatherNews took ${latency}s`);
   return { news };
 }
 
 export async function gatherFinancials(state: any) {
+  const startTime = Date.now();
   console.log(`Running gatherFinancials node for: ${state.resolvedName}...`);
   const companyName = state.resolvedName;
   
+  let financialsResult: any;
   if (state.isPublic && state.ticker) {
     const financials = await getCompanyOverview(state.ticker, companyName);
-    return { financials };
+    financialsResult = { financials };
   } else {
     // Private company financials
     console.log(`Company ${companyName} is private. Searching for private financial estimates/funding...`);
     try {
       const results = await searchNews(`${companyName} revenue funding valuation financial estimates private company`);
-      return {
+      financialsResult = {
         financials: {
           source: "Tavily Search (Private)",
           searchData: results.map((r: any) => ({
@@ -75,7 +83,7 @@ export async function gatherFinancials(state: any) {
         }
       };
     } catch (e: any) {
-      return {
+      financialsResult = {
         financials: {
           source: "None",
           error: `Failed to search private financials: ${e.message}`
@@ -83,78 +91,63 @@ export async function gatherFinancials(state: any) {
       };
     }
   }
+
+  const latency = ((Date.now() - startTime) / 1000).toFixed(2);
+  console.log(`[BENCHMARK] Node gatherFinancials took ${latency}s`);
+  return financialsResult;
 }
 
 export async function analyzeMarket(state: any) {
+  const startTime = Date.now();
   console.log(`Running analyzeMarket node for: ${state.resolvedName}...`);
   const llm = getLLM(0);
   
-  const newsContext = state.news ? state.news.map((n: any) => `- ${n.title}: ${n.content}`).join("\n") : "No news gathered.";
+  const newsContext = state.news ? state.news.map((n: any) => `- ${n.title} (Source: ${n.url}): ${n.content}`).join("\n") : "No news gathered.";
   const finContext = JSON.stringify(state.financials, null, 2);
   
-  const prompt = `You are an investment research analyst. Synthesize a market analysis for ${state.resolvedName}.
-Your analysis must cover:
-1. Competitive landscape.
-2. Industry tailwinds and headwinds.
-3. Total Addressable Market (TAM) commentary.
+  const structuredLlm = llm.withStructuredOutput(MarketAndRiskAnalysisSchema);
 
-You MUST ground your analysis strictly in the provided search results and financials. Do not hallucinate or use external prior knowledge unless it directly relates to and supports the facts below.
+  const prompt = `You are a combined market analyst and risk management officer. Your task is to perform both a market analysis and a structured risk assessment for ${state.resolvedName}.
 
-News & Web Context:
-${newsContext}
-
-Financials:
-${finContext}
-
-Provide a concise, professional market analysis.`;
-
-  const response = await llm.invoke(prompt);
-  const text = typeof response.content === 'string' ? response.content : JSON.stringify(response.content);
-  return { marketAnalysis: text };
-}
-
-export async function assessRisk(state: any) {
-  console.log(`Running assessRisk node for: ${state.resolvedName}...`);
-  const llm = getLLM(0);
-  
-  const newsContext = state.news ? state.news.map((n: any) => `- ${n.title} (Source: ${n.url}): ${n.content}`).join("\n") : "";
-  const finContext = JSON.stringify(state.financials, null, 2);
-  const marketContext = state.marketAnalysis || "";
-
-  const structuredLlm = llm.withStructuredOutput(RiskAssessmentSchema);
-
-  const prompt = `You are a risk management officer at an investment fund. Assess the risks of investing in ${state.resolvedName}.
-Specifically evaluate:
-1. Regulatory risks.
-2. Key-person risks.
-3. Balance sheet / financial risks.
-4. Concentration risks.
-
-Ground every single risk in a specific fact from the context. Cite the source (URL or node name like "gatherFinancials").
-
-Context:
+GATHERED CONTEXT:
 ---
 News:
 ${newsContext}
 
 Financials:
 ${finContext}
-
-Market Analysis:
-${marketContext}
 ---
 
-Generate a structured list of risks. For each, specify:
-- type (e.g. Regulatory, Financial, Leadership, etc.)
-- description (specific risk scenario)
-- severity (low, medium, or high)
-- source (specific URL or "gatherFinancials")`;
+Your response MUST fulfill both of the following:
+1. marketAnalysis: Fulfill this text covering competitive landscape, industry tailwinds and headwinds, and Total Addressable Market (TAM) commentary.
+2. riskAssessment: Fulfill this list of risks evaluating Regulatory risks, Key-person risks, Balance sheet / financial risks, and Concentration risks. Ground every risk in a specific fact from the context, and cite the source (URL or 'gatherFinancials').
+
+Provide the output strictly matching the structured schema.`;
 
   const result = await structuredLlm.invoke(prompt);
+  
+  const latency = ((Date.now() - startTime) / 1000).toFixed(2);
+  console.log(`[BENCHMARK] Node analyzeMarket took ${latency}s`);
+  return { 
+    marketAnalysis: result.marketAnalysis,
+    riskAssessment: result.riskAssessment
+  };
+}
+
+export async function assessRisk(state: any) {
+  const startTime = Date.now();
+  console.log(`Running assessRisk node for: ${state.resolvedName}...`);
+  
+  // Pass-through the pre-calculated riskAssessment
+  const result = state.riskAssessment || { risks: [] };
+  
+  const latency = ((Date.now() - startTime) / 1000).toFixed(2);
+  console.log(`[BENCHMARK] Node assessRisk took ${latency}s (Pass-through)`);
   return { riskAssessment: result };
 }
 
 export async function synthesizeDecision(state: any) {
+  const startTime = Date.now();
   console.log(`Running synthesizeDecision node for: ${state.resolvedName}...`);
   const llm = getLLM(0);
 
@@ -192,5 +185,8 @@ Produce the final investment recommendation:
 5. Sources Used: A list of unique URLs actually cited/used in the research. Make sure they are extracted from the News or Financials contexts above. Do not include placeholder URLs.`;
 
   const result = await structuredLlm.invoke(prompt);
+  
+  const latency = ((Date.now() - startTime) / 1000).toFixed(2);
+  console.log(`[BENCHMARK] Node synthesizeDecision took ${latency}s`);
   return { finalDecision: result };
 }
