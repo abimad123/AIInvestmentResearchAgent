@@ -225,20 +225,17 @@ export default function Home() {
       <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-zinc-200/50 transition-all">
         <div className="max-w-[1400px] mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="bg-brand text-white p-2.5 rounded-2xl shadow-md shadow-brand-soft flex items-center justify-center">
-              <Cpu className="w-5 h-5" />
+            <div className="bg-brand text-white p-3 rounded-2xl shadow-md shadow-brand-soft flex items-center justify-center">
+              <Cpu className="w-6 h-6" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-base font-extrabold text-zinc-950 tracking-tight flex items-center gap-0.5">
-                  <span className="text-brand font-black">FinSight</span>
+                <h1 className="text-xl md:text-2xl font-black text-zinc-950 tracking-tight flex items-center gap-1 leading-none">
+                  <span className="text-brand">FinSight</span>
                   <span>AI</span>
                 </h1>
-                <span className="bg-brand-soft text-brand text-[9px] font-bold px-2 py-0.5 rounded-full border border-brand-soft uppercase tracking-wide">
-                  Research Agent
-                </span>
               </div>
-              <p className="text-[10px] text-zinc-400 font-semibold tracking-wide uppercase">Autonomous investment engine</p>
+              <p className="text-[11px] text-zinc-400 font-bold tracking-wider uppercase mt-1">Autonomous investment engine</p>
             </div>
           </div>
 
@@ -287,7 +284,6 @@ export default function Home() {
         {/* Dashboard Area */}
         {!isLoading && !verdictData && !error && (
           <>
-            /* Blank state cards */
             <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 mt-16 animate-fadeIn">
               <div className="bg-white border border-zinc-200/60 rounded-3xl p-7 shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-zinc-300/80 transition-all duration-300 group">
                 <div className="w-12 h-12 rounded-2xl bg-brand-soft text-brand flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-brand-soft/80 transition-all duration-300">
