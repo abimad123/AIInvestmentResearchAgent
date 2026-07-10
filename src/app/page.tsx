@@ -22,6 +22,8 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [isDocsOpen, setIsDocsOpen] = useState(false);
   const [isApiOpen, setIsApiOpen] = useState(false);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [stepElapsedSeconds, setStepElapsedSeconds] = useState(0);
 
   // Final outputs
   const [resolvedCompany, setResolvedCompany] = useState<{
@@ -57,12 +59,52 @@ export default function Home() {
   const handleSearch = async (companyName: string) => {
     setIsLoading(true);
     resetState();
+    setElapsedSeconds(0);
+    setStepElapsedSeconds(0);
+
+    const abortController = new AbortController();
+    let timerInterval: NodeJS.Timeout | undefined;
 
     try {
+      let stepStartTime = Date.now();
+      let currentStepId = "resolveCompany";
+
+      timerInterval = setInterval(() => {
+        setElapsedSeconds((prev) => prev + 1);
+        
+        const stepElapsedMs = Date.now() - stepStartTime;
+        const stepSec = Math.floor(stepElapsedMs / 1000);
+        setStepElapsedSeconds(stepSec);
+
+        // Watchdog timeout limit: 60 seconds (60000ms)
+        const watchdogLimitMs = 60000;
+
+        if (stepElapsedMs > watchdogLimitMs) {
+          if (timerInterval) clearInterval(timerInterval);
+          abortController.abort();
+          
+          const timeoutMsg = `The research step "${currentStepId}" timed out after 60 seconds.`;
+          setError(timeoutMsg);
+          
+          // Helper to set error on current step
+          setSteps((prev) =>
+            prev.map((step) => {
+              if (step.id === currentStepId) {
+                return { ...step, status: "error", details: "Timed out after 60s" };
+              }
+              return step;
+            })
+          );
+          
+          setIsLoading(false);
+        }
+      }, 1000);
+
       const response = await fetch("/api/research", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ companyName }),
+        signal: abortController.signal,
       });
 
       if (!response.ok) {
@@ -76,9 +118,6 @@ export default function Home() {
       }
 
       let buffer = "";
-      
-      // Keep track of the active step ID
-      let currentActiveId = "resolveCompany";
 
       // Helper to update a specific step
       const updateStepStatus = (id: string, status: AgentStep["status"], details?: string) => {
@@ -121,8 +160,15 @@ export default function Home() {
               const data = JSON.parse(dataStr);
               
               if (currentEvent === "error") {
-                setError(data.error);
-                updateStepStatus(currentActiveId, "error", data.error);
+                const rawError = data.error || "";
+                const isRateLimit = /429|quota|exhausted|limit|rate limit/i.test(rawError);
+                const userFriendlyError = isRateLimit
+                  ? "Daily research quota reached — please try again tomorrow, or the demo will use a backup provider."
+                  : rawError;
+
+                setError(userFriendlyError);
+                updateStepStatus(currentStepId, "error", userFriendlyError);
+                if (timerInterval) clearInterval(timerInterval);
                 setIsLoading(false);
                 return;
               }
@@ -136,7 +182,9 @@ export default function Home() {
                     "completed",
                     `Resolved to: ${data.resolvedName}${data.ticker ? ` (${data.ticker})` : ""}`
                   );
-                  currentActiveId = "gatherNews";
+                  currentStepId = "gatherNews";
+                  stepStartTime = Date.now();
+                  setStepElapsedSeconds(0);
                   updateStepStatus("gatherNews", "running");
                   break;
 
@@ -147,7 +195,9 @@ export default function Home() {
                     "completed",
                     `Gathered ${data.news?.length || 0} news items`
                   );
-                  currentActiveId = "gatherFinancials";
+                  currentStepId = "gatherFinancials";
+                  stepStartTime = Date.now();
+                  setStepElapsedSeconds(0);
                   updateStepStatus("gatherFinancials", "running");
                   break;
 
@@ -158,7 +208,9 @@ export default function Home() {
                     "completed",
                     data.financials ? "Financial overview fetched" : "No financials available"
                   );
-                  currentActiveId = "analyzeMarket";
+                  currentStepId = "analyzeMarket";
+                  stepStartTime = Date.now();
+                  setStepElapsedSeconds(0);
                   updateStepStatus("analyzeMarket", "running");
                   break;
 
@@ -169,7 +221,9 @@ export default function Home() {
                     "completed",
                     "SWOT & Market analysis generated"
                   );
-                  currentActiveId = "assessRisk";
+                  currentStepId = "assessRisk";
+                  stepStartTime = Date.now();
+                  setStepElapsedSeconds(0);
                   updateStepStatus("assessRisk", "running");
                   break;
 
@@ -180,7 +234,9 @@ export default function Home() {
                     "completed",
                     `Loaded ${data.riskAssessment?.risks?.length || 0} pre-computed key risks`
                   );
-                  currentActiveId = "synthesizeDecision";
+                  currentStepId = "synthesizeDecision";
+                  stepStartTime = Date.now();
+                  setStepElapsedSeconds(0);
                   updateStepStatus("synthesizeDecision", "running");
                   break;
 
@@ -208,10 +264,20 @@ export default function Home() {
         }
       }
 
-      setIsLoading(false);
     } catch (err: any) {
-      console.error("Execution error:", err);
-      setError(err.message || "An unexpected error occurred");
+      if (err.name === "AbortError") {
+        console.log("Fetch request aborted due to step timeout.");
+      } else {
+        console.error("Execution error:", err);
+        const rawError = err.message || "";
+        const isRateLimit = /429|quota|exhausted|limit|rate limit/i.test(rawError);
+        const userFriendlyError = isRateLimit
+          ? "Daily research quota reached — please try again tomorrow, or the demo will use a backup provider."
+          : (rawError || "An unexpected error occurred");
+        setError(userFriendlyError);
+      }
+    } finally {
+      if (timerInterval) clearInterval(timerInterval);
       setIsLoading(false);
     }
   };
@@ -423,12 +489,61 @@ export default function Home() {
               )}
 
               {isLoading && !verdictData && (
-                <div className="flex flex-col items-center justify-center py-20 bg-white border border-zinc-100 rounded-3xl shadow-sm text-center">
-                  <div className="w-12 h-12 border-4 border-zinc-950 border-t-transparent rounded-full animate-spin mb-4" />
-                  <h4 className="text-sm font-semibold text-zinc-800">Agent Researching...</h4>
-                  <p className="text-xs text-zinc-400 max-w-xs mt-1.5 leading-relaxed font-medium">
-                    Please stand by as the agent performs searches, parses financial models, and completes the risk audit.
-                  </p>
+                <div className="bg-white border border-zinc-200/60 rounded-3xl p-8 shadow-sm flex flex-col justify-between min-h-[300px] animate-fadeIn">
+                  {/* Status header */}
+                  <div className="flex items-start justify-between border-b border-zinc-100 pb-5">
+                    <div>
+                      <h4 className="text-sm font-bold text-zinc-900">Active Research Session</h4>
+                      <p className="text-[11px] text-zinc-400 font-bold tracking-wider uppercase mt-1">Autonomous Agent Pipeline</p>
+                    </div>
+                    {/* Pulsing state dot */}
+                    <div className="flex items-center gap-2 bg-brand-soft/60 px-3 py-1.5 rounded-full border border-brand-soft">
+                      <span className="w-2 h-2 rounded-full bg-brand animate-pulse" />
+                      <span className="text-[10px] font-bold text-brand uppercase tracking-wider">Running</span>
+                    </div>
+                  </div>
+
+                  {/* Core Status Message & Stopwatch */}
+                  <div className="py-8 flex flex-col items-center text-center">
+                    {/* Large stopwatch-like timer design */}
+                    <div className="relative flex items-center justify-center w-24 h-24 rounded-full bg-zinc-50 border border-zinc-200/50 mb-4 shadow-inner">
+                      <span className="text-2xl font-black text-zinc-950 tabular-nums">
+                        {elapsedSeconds}s
+                      </span>
+                    </div>
+                    
+                    {/* Active Step Label */}
+                    <p className="text-xs font-semibold text-zinc-800 mt-2">
+                      Current Stage: <span className="text-brand font-bold">
+                        {steps.find(s => s.status === "running")?.label || "Processing..."}
+                      </span>
+                    </p>
+                    
+                    {/* Stage Specific Elapsed timer */}
+                    <p className="text-[10px] text-zinc-400 font-semibold tracking-wide uppercase mt-1">
+                      Stage Time: <span className="tabular-nums font-bold text-zinc-600">{stepElapsedSeconds}s</span> / 60s limit
+                    </p>
+                  </div>
+
+                  {/* Pipeline Progress Bar */}
+                  <div className="border-t border-zinc-100 pt-5">
+                    <div className="flex items-center justify-between text-[11px] font-bold text-zinc-400 uppercase tracking-wide mb-2">
+                      <span>Pipeline Progress</span>
+                      <span className="text-zinc-700">
+                        {Math.round(
+                          (steps.filter(s => s.status === "completed").length / steps.length) * 100
+                        )}%
+                      </span>
+                    </div>
+                    <div className="w-full h-2 bg-zinc-100 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-zinc-950 rounded-full transition-all duration-500 ease-out"
+                        style={{ 
+                          width: `${(steps.filter(s => s.status === "completed").length / steps.length) * 100}%` 
+                        }}
+                      />
+                    </div>
+                  </div>
                 </div>
               )}
             </div>

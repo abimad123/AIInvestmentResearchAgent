@@ -1,0 +1,26 @@
+diff --git a/node_modules/@langchain/google-genai/dist/chat_models.cjs b/node_modules/@langchain/google-genai/dist/chat_models.cjs
+index 00da701..2f8e869 100644
+--- a/node_modules/@langchain/google-genai/dist/chat_models.cjs
++++ b/node_modules/@langchain/google-genai/dist/chat_models.cjs
+@@ -551,7 +551,7 @@ var ChatGoogleGenerativeAI = class extends _langchain_core_language_models_chat_
+ 				llmOutput: { estimatedTokenUsage: tokenUsage }
+ 			};
+ 		}
+-		const res = await this.completionWithRetry(this._buildGenerateContentRequest(messages, options));
++		const res = await this.completionWithRetry(this._buildGenerateContentRequest(messages, options), options);
+ 		let usageMetadata;
+ 		if ("usageMetadata" in res.response) usageMetadata = require_common.convertUsageMetadata(res.response.usageMetadata, this.model);
+ 		const generationResult = require_common.mapGenerateContentResultToChatResult(res.response, { usageMetadata });
+diff --git a/node_modules/@langchain/google-genai/dist/chat_models.js b/node_modules/@langchain/google-genai/dist/chat_models.js
+index d917bc1..7fdf631 100644
+--- a/node_modules/@langchain/google-genai/dist/chat_models.js
++++ b/node_modules/@langchain/google-genai/dist/chat_models.js
+@@ -551,7 +551,7 @@ var ChatGoogleGenerativeAI = class extends BaseChatModel {
+ 				llmOutput: { estimatedTokenUsage: tokenUsage }
+ 			};
+ 		}
+-		const res = await this.completionWithRetry(this._buildGenerateContentRequest(messages, options));
++		const res = await this.completionWithRetry(this._buildGenerateContentRequest(messages, options), options);
+ 		let usageMetadata;
+ 		if ("usageMetadata" in res.response) usageMetadata = convertUsageMetadata(res.response.usageMetadata, this.model);
+ 		const generationResult = mapGenerateContentResultToChatResult(res.response, { usageMetadata });
