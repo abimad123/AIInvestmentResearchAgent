@@ -3,6 +3,23 @@ import { ResolveCompanySchema, RiskAssessmentSchema, FinalDecisionSchema, Market
 import { searchNews } from "./tools/tavily";
 import { getCompanyOverview } from "./tools/financials";
 
+const getTraceConfig = (nodeName: string) => ({
+  timeout: 60000, // 60 seconds client-side timeout
+  callbacks: [
+    {
+      handleLLMStart(llm: any, prompts: string[]) {
+        console.log(`[${new Date().toISOString()}] [${nodeName}] LLM Start. Prompts count: ${prompts.length}. Prompt length: ${prompts[0]?.length || 0} chars.`);
+      },
+      handleLLMEnd(output: any) {
+        console.log(`[${new Date().toISOString()}] [${nodeName}] LLM End. Output generated successfully.`);
+      },
+      handleLLMError(err: any) {
+        console.error(`[${new Date().toISOString()}] [${nodeName}] LLM Error:`, err);
+      }
+    }
+  ]
+});
+
 export async function resolveCompany(state: any) {
   const startTime = Date.now();
   console.log(`Running resolveCompany node for: ${state.companyName}...`);
@@ -26,7 +43,7 @@ Determine:
 2. Is it public or private?
 3. What is the stock ticker (if public)?`;
 
-  const result = await structuredLlm.invoke(prompt);
+  const result = await structuredLlm.invoke(prompt, getTraceConfig("resolveCompany"));
   
   const latency = ((Date.now() - startTime) / 1000).toFixed(2);
   console.log(`Resolved company to: ${result.resolvedName} (Public: ${result.isPublic}, Ticker: ${result.ticker || "N/A"})`);
@@ -124,7 +141,7 @@ Your response MUST fulfill both of the following:
 
 Provide the output strictly matching the structured schema.`;
 
-  const result = await structuredLlm.invoke(prompt);
+  const result = await structuredLlm.invoke(prompt, getTraceConfig("analyzeMarket"));
   
   const latency = ((Date.now() - startTime) / 1000).toFixed(2);
   console.log(`[BENCHMARK] Node analyzeMarket took ${latency}s`);
@@ -184,7 +201,7 @@ Produce the final investment recommendation:
 4. Key Risks: 1-2 bullet points of risks to watch.
 5. Sources Used: A list of unique URLs actually cited/used in the research. Make sure they are extracted from the News or Financials contexts above. Do not include placeholder URLs.`;
 
-  const result = await structuredLlm.invoke(prompt);
+  const result = await structuredLlm.invoke(prompt, getTraceConfig("synthesizeDecision"));
   
   const latency = ((Date.now() - startTime) / 1000).toFixed(2);
   console.log(`[BENCHMARK] Node synthesizeDecision took ${latency}s`);

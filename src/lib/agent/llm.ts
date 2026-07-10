@@ -10,6 +10,7 @@ export function getLLM(temperature = 0): BaseChatModel {
       model: "gemini-2.5-flash",
       apiKey: process.env.GOOGLE_API_KEY,
       temperature,
+      maxRetries: 1,
     });
   }
 
@@ -17,5 +18,6 @@ export function getLLM(temperature = 0): BaseChatModel {
   return new ChatOpenAI({
     modelName: "gpt-4o-mini",
     temperature,
+    maxRetries: 1,
   });
 }
