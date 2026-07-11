@@ -21,12 +21,12 @@ export function SearchBar({ onSearch, isLoading }: SearchBarProps) {
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto mb-8">
+    <div id="search-section" className="w-full max-w-3xl mx-auto mb-8 scroll-mt-28">
       <form onSubmit={handleSubmit} className="relative flex items-center">
         <div className="relative flex-1">
           <input
             type="text"
-            placeholder="Enter company name (e.g. Tesla, Apple, NVIDIA)..."
+            placeholder="Enter company name (e.g. Tesla)..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             disabled={isLoading}
