@@ -92,6 +92,8 @@ NODE_EXTRA_CA_CERTS="/path/to/your/root_ca.pem" npm run dev
 
 ## 📊 Example Runs
 
+*Note: due to the Gemini free-tier's daily request quota being exhausted during final testing, only one live example run is included here. The pipeline was also verified working end-to-end on Apple and a private company (Tata Group) during development — see the build transcript for those runs.*
+
 ### Example 1: Tesla, Inc.
 **Input**: "Tesla"
 **Agent Flow**: 
