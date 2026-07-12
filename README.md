@@ -87,3 +87,49 @@ npm run dev
 # Linux / macOS
 NODE_EXTRA_CA_CERTS="/path/to/your/root_ca.pem" npm run dev
 ```
+
+---
+
+## 📊 Example Runs
+
+### Example 1: Tesla, Inc.
+**Input**: "Tesla"
+**Agent Flow**: 
+- Resolved to "Tesla, Inc." (Public, TSLA).
+- Gathered recent news on Q3 earnings, Cybertruck production, and Robotaxi events.
+- Pulled latest income statement metrics via Alpha Vantage.
+
+**Synthesized Output:**
+```json
+{
+  "verdict": "WATCH",
+  "confidenceScore": "medium",
+  "reasons": [
+    {
+      "text": "High valuation multiples combined with declining automotive gross margins present short-term headwinds.",
+      "sourceNode": "analyzeMarket"
+    },
+    {
+      "text": "Strong cash position and leadership in EV infrastructure and autonomy software provide long-term upside potential.",
+      "sourceNode": "synthesizeDecision"
+    }
+  ],
+  "keyRisks": [
+    "Regulatory scrutiny over Full Self-Driving claims.",
+    "Increased competition in the Chinese EV market."
+  ],
+  "sourcesUsed": [
+    "https://www.reuters.com/business/autos-transportation/...",
+    "Alpha Vantage Financials (TSLA)"
+  ]
+}
+```
+
+---
+
+## 🚀 What I'd Improve with More Time
+
+1. **Persistent Caching Layer**: Implement Redis or a database (e.g., PostgreSQL/Supabase) to cache API responses (Alpha Vantage, Tavily) to drastically reduce LLM provider costs and rate limits for commonly searched companies.
+2. **Enhanced SEC Parsing**: Build a dedicated tool to pull and vector-search raw 10-K/10-Q filings from the SEC EDGAR database to provide deeper, hallucination-free fundamentals context.
+3. **User Authentication & Portfolios**: Allow users to log in, save previous research runs, and build a "Watchlist" that automatically refreshes research on a weekly basis.
+4. **Agentic Reflection Node**: Add a self-correction loop in the LangGraph setup where the agent reviews its own verdict for bias or missing evidence before finalizing the stream.
